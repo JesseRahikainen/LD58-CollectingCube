@@ -1,0 +1,81 @@
+[gd_scene load_steps=14 format=3 uid="uid://doep22j20hg0r"]
+
+[ext_resource type="Script" uid="uid://sdg41av7y7x1" path="res://Scripts/booster.gd" id="1_o0tsq"]
+[ext_resource type="BoxMesh" uid="uid://b74jws1xsvbq1" path="res://Models/booster_gfx.tres" id="2_ntnxt"]
+[ext_resource type="Texture2D" uid="uid://b4ud2hkcur0eg" path="res://Textures/arrow.png" id="3_geh36"]
+[ext_resource type="AudioStream" uid="uid://kwql5hsriqrv" path="res://Audio/booster_a.ogg" id="4_o2alu"]
+[ext_resource type="AudioStream" uid="uid://5uwo21mq1v0m" path="res://Audio/booster_c.ogg" id="5_xoqm6"]
+[ext_resource type="AudioStream" uid="uid://dmdqcnpf0tgfh" path="res://Audio/booster_f.ogg" id="6_edbhv"]
+
+[sub_resource type="Curve" id="Curve_nngtn"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.49584484, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_vofx3"]
+curve = SubResource("Curve_nngtn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_00k4y"]
+emission_shape_offset = Vector3(0, 0.26, 0)
+emission_shape = 3
+emission_box_extents = Vector3(0.4, 0.25, 0.4)
+gravity = Vector3(0, 0.3, 0)
+scale_min = 0.099999994
+scale_max = 0.29999998
+alpha_curve = SubResource("CurveTexture_vofx3")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vofx3"]
+transparency = 1
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("3_geh36")
+emission_enabled = true
+emission = Color(0.37254903, 0.8039216, 0.89411765, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_00k4y"]
+material = SubResource("StandardMaterial3D_vofx3")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nngtn"]
+size = Vector3(0.8, 0.8, 0.8)
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_a2bdw"]
+streams_count = 3
+stream_0/stream = ExtResource("4_o2alu")
+stream_1/stream = ExtResource("5_xoqm6")
+stream_2/stream = ExtResource("6_edbhv")
+
+[node name="Booster" type="Node3D" node_paths=PackedStringArray("sound")]
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0)
+script = ExtResource("1_o0tsq")
+sound = NodePath("Sound")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_ntnxt")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+amount = 4
+lifetime = 1.5
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_00k4y")
+draw_pass_1 = SubResource("QuadMesh_00k4y")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, -0.5, 0)
+amount = 4
+lifetime = 1.5
+preprocess = 2.0
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_00k4y")
+draw_pass_1 = SubResource("QuadMesh_00k4y")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_nngtn")
+
+[node name="Sound" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_a2bdw")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

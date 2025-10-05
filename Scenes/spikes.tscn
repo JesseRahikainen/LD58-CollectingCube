@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://cn6cks8at0qcf"]
+
+[ext_resource type="Script" uid="uid://cf0sngyo0cxh4" path="res://Scripts/spikes.gd" id="1_0qgod"]
+[ext_resource type="ArrayMesh" uid="uid://cl8vuii5xbtct" path="res://Models/Spikes/spikes.obj" id="2_qvr35"]
+[ext_resource type="BoxMesh" uid="uid://50n1ckpxsica" path="res://Models/damage_gfx.tres" id="3_nuli0"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2klc5"]
+size = Vector3(8, 8, 8)
+
+[sub_resource type="Curve" id="Curve_vofx3"]
+_data = [Vector2(0, 0), 0.0, 6.420448, 0, 0, Vector2(0.49722987, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_00k4y"]
+curve = SubResource("Curve_vofx3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3a44l"]
+particle_flag_rotate_y = true
+emission_shape = 3
+emission_box_extents = Vector3(4, 4, 4)
+angle_min = -288.0
+angle_max = 258.5
+angular_velocity_min = -112.610016
+angular_velocity_max = 332.30997
+gravity = Vector3(0, 0, 0)
+scale_min = 0.01
+scale_max = 0.29999998
+scale_curve = SubResource("CurveTexture_00k4y")
+
+[node name="Spikes" type="Node3D"]
+script = ExtResource("1_0qgod")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_2klc5")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 40
+process_material = SubResource("ParticleProcessMaterial_3a44l")
+draw_pass_1 = ExtResource("2_qvr35")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
+mesh = ExtResource("3_nuli0")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

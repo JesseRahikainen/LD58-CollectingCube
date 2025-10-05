@@ -1,0 +1,5 @@
+extends Node
+
+signal on_collectable_collected
+signal num_jumps_changed
+signal max_jumps_changed

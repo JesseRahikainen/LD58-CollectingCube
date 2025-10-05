@@ -1,0 +1,52 @@
+[gd_scene load_steps=11 format=3 uid="uid://dw7cg2qn0vnsv"]
+
+[ext_resource type="Script" uid="uid://wrwbberfypd0" path="res://Scripts/collectable.gd" id="1_3rsma"]
+[ext_resource type="BoxMesh" uid="uid://cii87a4pfulnb" path="res://Models/power_up_box_0.tres" id="2_me652"]
+[ext_resource type="BoxMesh" uid="uid://dc8cv6lg3jtpb" path="res://Models/power_up_box_1.tres" id="3_govy6"]
+[ext_resource type="Script" uid="uid://dlns1jura3iu8" path="res://Scripts/rotates.gd" id="3_v8770"]
+[ext_resource type="BoxMesh" uid="uid://dq02rcmjhha8w" path="res://Models/power_up_box_2.tres" id="5_v8770"]
+[ext_resource type="AudioStream" uid="uid://wl2vvodtdksf" path="res://Audio/mcguffin_a.ogg" id="6_y2vax"]
+[ext_resource type="AudioStream" uid="uid://bjw2quu1l0ex7" path="res://Audio/mcguffin_c.ogg" id="7_1me2v"]
+[ext_resource type="AudioStream" uid="uid://ced5lwxtq3nel" path="res://Audio/mcguffin_f.ogg" id="8_asx67"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_v8770"]
+radius = 3.0
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_nor56"]
+streams_count = 3
+stream_0/stream = ExtResource("6_y2vax")
+stream_1/stream = ExtResource("7_1me2v")
+stream_2/stream = ExtResource("8_asx67")
+
+[node name="Collectable_001" type="Node3D" node_paths=PackedStringArray("collect_sound")]
+script = ExtResource("1_3rsma")
+collect_sound = NodePath("PickUpSound")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 4
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_v8770")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_me652")
+script = ExtResource("3_v8770")
+velocity = Vector3(1, 0.5, 0.75)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.69493455, 0.719073, 0, -0.48724958, 0.47089317, -0.7354233, -0.5288231, 0.5110711, 0.67760795, 0, 0, 0)
+mesh = ExtResource("3_govy6")
+script = ExtResource("3_v8770")
+velocity = Vector3(-2, -1, -2.2)
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8064343, 0, 0.59132373, -0.21027258, 0.93463963, 0.28676513, -0.5526746, -0.3555964, 0.7537254, 0, 0, 0)
+mesh = ExtResource("5_v8770")
+script = ExtResource("3_v8770")
+velocity = Vector3(4, -6, 3.8)
+
+[node name="PickUpSound" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_nor56")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

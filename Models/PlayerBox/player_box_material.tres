@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://djajgoky35kul"]
+
+[ext_resource type="Shader" uid="uid://dtflx508dstqk" path="res://Shaders/player_box_material.gdshader" id="1_6bjvv"]
+[ext_resource type="Texture2D" uid="uid://b6vgkcjubopxo" path="res://Models/PlayerBox/player_box_Material.png" id="2_v2wbw"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_6bjvv")
+shader_parameter/albedo = ExtResource("2_v2wbw")
+shader_parameter/velocity = Vector3(0, 0, 0)
+shader_parameter/stretchAmt = 0.1
+shader_parameter/shrinkAmt = 0.2
+shader_parameter/minVelocity = 5.0

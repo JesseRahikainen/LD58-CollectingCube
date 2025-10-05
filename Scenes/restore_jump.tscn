@@ -1,0 +1,89 @@
+[gd_scene load_steps=16 format=3 uid="uid://dokvt0lyn6oju"]
+
+[ext_resource type="Script" uid="uid://b7b4dkghrm8bc" path="res://Scripts/restore_jump.gd" id="1_evnfj"]
+[ext_resource type="Texture2D" uid="uid://dnvax1vpkao2" path="res://Textures/feather.png" id="2_b26ao"]
+[ext_resource type="Texture2D" uid="uid://dup3g2n1qwsxp" path="res://Textures/power_up_circle.png" id="3_nplne"]
+[ext_resource type="AudioStream" uid="uid://cmih7xu2c0r8x" path="res://Audio/refresh_jump_a.ogg" id="4_r0eal"]
+[ext_resource type="AudioStream" uid="uid://c3gunio8hyojp" path="res://Audio/refresh_jump_c.ogg" id="5_qsjqp"]
+[ext_resource type="AudioStream" uid="uid://coi62tffpi525" path="res://Audio/refresh_jump_f.ogg" id="6_0udhd"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_c7le1"]
+radius = 3.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2klc5"]
+render_priority = 1
+transparency = 1
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("2_b26ao")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_nngtn"]
+material = SubResource("StandardMaterial3D_2klc5")
+size = Vector2(2, 2)
+
+[sub_resource type="Curve" id="Curve_2klc5"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.49861497, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_nngtn"]
+curve = SubResource("Curve_2klc5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vofx3"]
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = -2.2351742e-05
+gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 5.0
+alpha_curve = SubResource("CurveTexture_nngtn")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_00k4y"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("3_nplne")
+emission_enabled = true
+emission = Color(0.60784316, 0.6784314, 0.7176471, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_3a44l"]
+material = SubResource("StandardMaterial3D_00k4y")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_bug4v"]
+streams_count = 3
+stream_0/stream = ExtResource("4_r0eal")
+stream_1/stream = ExtResource("5_qsjqp")
+stream_2/stream = ExtResource("6_0udhd")
+
+[node name="RestoreJump" type="Node3D" node_paths=PackedStringArray("pickup_sound")]
+script = ExtResource("1_evnfj")
+pickup_sound = NodePath("AudioStreamPlayer3D")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_c7le1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("QuadMesh_nngtn")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 4
+explosiveness = 0.25
+randomness = 0.5
+visibility_aabb = AABB(-3, -3, -3, 6, 6, 6)
+local_coords = true
+transform_align = 1
+process_material = SubResource("ParticleProcessMaterial_vofx3")
+draw_pass_1 = SubResource("QuadMesh_3a44l")
+
+[node name="RespawnTimer" type="Timer" parent="."]
+wait_time = 4.0
+one_shot = true
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_bug4v")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="timeout" from="RespawnTimer" to="." method="_on_respawn_timer_timeout"]

@@ -1,0 +1,975 @@
+[gd_scene load_steps=50 format=3 uid="uid://bhsg7qowb6gyu"]
+
+[ext_resource type="Script" uid="uid://cgine3ghedh4w" path="res://Scripts/level.gd" id="1_6phgx"]
+[ext_resource type="Script" uid="uid://dofkbaf6gqc07" path="res://Scripts/player_controller.gd" id="1_tumq0"]
+[ext_resource type="PackedScene" uid="uid://cgmrmr1yrtuyk" path="res://Models/TerrainBox/terrain_box.glb" id="2_0f350"]
+[ext_resource type="Script" uid="uid://bqb7aml633brf" path="res://Scripts/camera_controller.gd" id="2_k5f4k"]
+[ext_resource type="Texture2D" uid="uid://daa2wkeamygo3" path="res://Textures/box_shadow.png" id="3_81xng"]
+[ext_resource type="PackedScene" uid="uid://dw7cg2qn0vnsv" path="res://Scenes/collectable.tscn" id="4_pa6b8"]
+[ext_resource type="PackedScene" uid="uid://dxwjei6vw7i45" path="res://Scenes/block.tscn" id="4_t205d"]
+[ext_resource type="PackedScene" uid="uid://n406avhjuo4s" path="res://Models/PlayerBox/player_box.glb" id="4_wqkje"]
+[ext_resource type="PackedScene" uid="uid://dokvt0lyn6oju" path="res://Scenes/restore_jump.tscn" id="5_nngtn"]
+[ext_resource type="PackedScene" uid="uid://bna8vavyx803s" path="res://Scenes/give_extra_jump.tscn" id="6_c7le1"]
+[ext_resource type="LabelSettings" uid="uid://cbk0234kssg01" path="res://UI/base_label_settings.tres" id="8_754fn"]
+[ext_resource type="Script" uid="uid://bfdywx2dd7two" path="res://Scripts/collectables_display.gd" id="8_bvt00"]
+[ext_resource type="Script" uid="uid://bdeumnqg04i2y" path="res://Scripts/air_jumps_display.gd" id="10_ha31o"]
+[ext_resource type="Texture2D" uid="uid://dk3cf7atjnbwy" path="res://Textures/air_jump_filled.png" id="10_qxfql"]
+[ext_resource type="Texture2D" uid="uid://dp4r7oqm4nuqy" path="res://Textures/air_jump_empty.png" id="11_ha31o"]
+[ext_resource type="Script" uid="uid://dixoo2mm1y20n" path="res://Scripts/jump_indicator.gd" id="11_pa6b8"]
+[ext_resource type="PackedScene" uid="uid://doep22j20hg0r" path="res://Scenes/booster.tscn" id="16_2klc5"]
+[ext_resource type="PackedScene" uid="uid://cn6cks8at0qcf" path="res://Scenes/spikes.tscn" id="17_nngtn"]
+[ext_resource type="AudioStream" uid="uid://4byg2v6oip8f" path="res://Audio/jump_a.ogg" id="17_u0did"]
+[ext_resource type="AudioStream" uid="uid://b2lau2j1buy3c" path="res://Audio/jump_c.ogg" id="18_53r2q"]
+[ext_resource type="AudioStream" uid="uid://cbnkhb0cy6dqp" path="res://Audio/ld_58_song.ogg" id="18_vofx3"]
+[ext_resource type="Script" uid="uid://ute08l6bjk4a" path="res://Scripts/intro.gd" id="19_24uko"]
+[ext_resource type="AudioStream" uid="uid://ce1gvmniac1w1" path="res://Audio/jump_f.ogg" id="19_luodc"]
+[ext_resource type="LabelSettings" uid="uid://bcy1vnt6l0p26" path="res://UI/display_text_settings.tres" id="19_pnhnk"]
+[ext_resource type="Texture2D" uid="uid://dcia046kbq5mb" path="res://Textures/mcguffin_image.png" id="20_24uko"]
+[ext_resource type="AudioStream" uid="uid://chubrqe6osjnp" path="res://Audio/death_a.ogg" id="21_1cgv8"]
+[ext_resource type="Texture2D" uid="uid://dfsltaaq4jofk" path="res://Textures/extra_jump_image.png" id="21_gf56v"]
+[ext_resource type="AudioStream" uid="uid://cq03s1rte3iu2" path="res://Audio/death_c.ogg" id="22_hcs0j"]
+[ext_resource type="Texture2D" uid="uid://crqeuy64g642" path="res://Textures/jump_recharge_image.png" id="22_pnhnk"]
+[ext_resource type="AudioStream" uid="uid://bvte54v0rhc5x" path="res://Audio/death_f.ogg" id="23_t205d"]
+[ext_resource type="AudioStream" uid="uid://dtkuygd0v15y8" path="res://Audio/extra_jump_f.ogg" id="24_hcs0j"]
+[ext_resource type="AudioStream" uid="uid://b5bw8oie8clto" path="res://Audio/dash_a.ogg" id="26_ais7f"]
+[ext_resource type="AudioStream" uid="uid://njibl4opw48c" path="res://Audio/dash_c.ogg" id="27_re0q2"]
+[ext_resource type="AudioStream" uid="uid://bv7u7ci4olcos" path="res://Audio/dash_f.ogg" id="28_fq0f7"]
+[ext_resource type="Script" uid="uid://d32au3hy2bnw8" path="res://Scripts/end_screen.gd" id="35_re0q2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8c0lf"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ais7f"]
+sky_top_color = Color(0.3882353, 0.60784316, 1, 1)
+sky_horizon_color = Color(0.60784316, 0.6784314, 0.7176471, 1)
+sky_curve = 0.010047882
+ground_bottom_color = Color(0.13333334, 0.1254902, 0.20392157, 1)
+ground_horizon_color = Color(0.60784316, 0.6784314, 0.7176471, 1)
+
+[sub_resource type="Sky" id="Sky_re0q2"]
+sky_material = SubResource("ProceduralSkyMaterial_ais7f")
+
+[sub_resource type="Environment" id="Environment_fq0f7"]
+background_mode = 2
+sky = SubResource("Sky_re0q2")
+fog_light_color = Color(0.79607844, 0.85882354, 0.9882353, 1)
+volumetric_fog_density = 0.005
+
+[sub_resource type="LabelSettings" id="LabelSettings_00k4y"]
+font_size = 32
+
+[sub_resource type="Curve" id="Curve_tumq0"]
+_limits = [0.0, 80.0, 0.0, 0.5]
+_data = [Vector2(0, 60), 0.0, 0.0, 0, 0, Vector2(0.5, 60), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_bvt00"]
+_limits = [0.0, 1.0, 0.0, 1.2]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1.2, 1), 2.2125888, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tumq0"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_1cgv8"]
+streams_count = 3
+stream_0/stream = ExtResource("17_u0did")
+stream_1/stream = ExtResource("18_53r2q")
+stream_2/stream = ExtResource("19_luodc")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_idpk0"]
+streams_count = 3
+stream_0/stream = ExtResource("21_1cgv8")
+stream_1/stream = ExtResource("22_hcs0j")
+stream_2/stream = ExtResource("23_t205d")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_bp4cd"]
+streams_count = 3
+stream_0/stream = ExtResource("26_ais7f")
+stream_1/stream = ExtResource("27_re0q2")
+stream_2/stream = ExtResource("28_fq0f7")
+
+[sub_resource type="LabelSettings" id="LabelSettings_vofx3"]
+font_size = 42
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_re0q2"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_re0q2"]
+font_size = 64
+
+[node name="Level" type="Node3D" node_paths=PackedStringArray("spawn_point", "player")]
+script = ExtResource("1_6phgx")
+spawn_point = NodePath("SpawnPoint")
+player = NodePath("Player")
+
+[node name="SpawnPoint" type="Node3D" parent="."]
+transform = Transform3D(-0.99993557, 0.00027682807, -0.011350756, 0, 0.99970275, 0.024381267, 0.011354131, 0.024379695, -0.9996383, 0, 1.8687531, 0)
+
+[node name="Ground" type="Node3D" parent="."]
+
+[node name="Block" type="Node3D" parent="Ground"]
+transform = Transform3D(16, 0, 0, 0, 48, 0, 0, 0, 16, -30.416924, -39.848885, -51.267876)
+
+[node name="terrain_box" parent="Ground/Block" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block"]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block/StaticBody3D"]
+visible = false
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block2" type="Node3D" parent="Ground"]
+transform = Transform3D(16, 0, 0, 0, 32, 0, 0, 0, 16, 12.624237, -18.438683, -39.62622)
+
+[node name="terrain_box" parent="Ground/Block2" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block2"]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block2/StaticBody3D"]
+visible = false
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Booster" parent="Ground" instance=ExtResource("16_2klc5")]
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 41.95986, 39.793606, -214.12233)
+
+[node name="Block3" type="Node3D" parent="Ground"]
+transform = Transform3D(-1.3987644e-06, 0, 32, 0, 64, 0, -32, 0, -1.3987644e-06, -20.586609, -64, 32)
+
+[node name="terrain_box" parent="Ground/Block3" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block3"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block3/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block4" type="Node3D" parent="Ground"]
+transform = Transform3D(-37.335915, 0, -3.2057187e-06, 0, 64, 0, 3.2640094e-06, 0, -36.669147, 0, -42.333496, -97.10251)
+
+[node name="terrain_box" parent="Ground/Block4" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block4"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block4/StaticBody3D"]
+visible = false
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block5" type="Node3D" parent="Ground"]
+transform = Transform3D(-1.3987644e-06, 0, 32, 0, 64, 0, -32, 0, -1.3987644e-06, 43.41339, -64, 32)
+
+[node name="terrain_box" parent="Ground/Block5" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block5"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block5/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block6" type="Node3D" parent="Ground"]
+transform = Transform3D(-1.3987644e-06, 0, 64, 0, 64, 0, -32, 0, -2.7975289e-06, 11.413391, -64, -32)
+
+[node name="terrain_box" parent="Ground/Block6" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block6"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block6/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block7" type="Node3D" parent="Ground"]
+transform = Transform3D(64, 0, 0, 0, 64, 0, 0, 0, 64, 117.5629, 14.986496, -256)
+
+[node name="terrain_box" parent="Ground/Block7" instance=ExtResource("2_0f350")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block7"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block7/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block8" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(-2.7975289e-06, 0, 64, 0, 64, 0, -64, 0, -2.7975289e-06, 0, -27.455688, -195.93988)
+
+[node name="Block9" type="Node3D" parent="Ground"]
+transform = Transform3D(64, 0, 0, 0, 27.16536, 0, 0, 0, 64, 7.528839, 141.8785, -337.585)
+
+[node name="terrain_box" parent="Ground/Block9" instance=ExtResource("2_0f350")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block9"]
+visible = false
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block9/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="SpikeGroup" type="Node3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50.635)
+
+[node name="Spikes" parent="Ground/SpikeGroup" instance=ExtResource("17_nngtn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.654335, 82.986496, -306.9998)
+
+[node name="Spikes2" parent="Ground/SpikeGroup" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2.3836193, 0, 0, 0, 1, 0, 0, 0, 1.6625345, 75.103004, 82.986496, -297.93817)
+
+[node name="Spikes3" parent="Ground/SpikeGroup" instance=ExtResource("17_nngtn")]
+transform = Transform3D(4.396538, 0, 0, 0, 1, 0, 0, 0, 1, 90.18052, 82.986496, -307.7064)
+
+[node name="Spikes4" parent="Ground/SpikeGroup" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2.3836193, 0, 0, 0, 1.3939203, 0, 0, 0, 2.594102, 93.9108, 82.986496, -294.99548)
+
+[node name="Spikes5" parent="Ground/SpikeGroup" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2.3836193, 0, 0, 0, 1.3939203, 0, 0, 0, 2.594102, 84.453316, 82.986496, -320.59384)
+
+[node name="Spikes6" parent="Ground/SpikeGroup" instance=ExtResource("17_nngtn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98.99462, 80.54086, -314.40347)
+
+[node name="Block10" type="Node3D" parent="Ground"]
+transform = Transform3D(-2.7975289e-06, 0, 64, 0, 27.16536, 0, -64, 0, -2.7975289e-06, 105.00312, 37.99744, -427.9694)
+
+[node name="terrain_box" parent="Ground/Block10" instance=ExtResource("2_0f350")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block10"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block10/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="RestoreJump" parent="Ground" instance=ExtResource("5_nngtn")]
+transform = Transform3D(0.99563724, -0.011940853, -0.09254188, 0, 0.99177796, -0.12797098, 0.093309075, 0.12741266, 0.987451, 120.921936, 90.190506, -351.06265)
+
+[node name="SpikeGroup2" type="Node3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.305, 0, -43.645)
+
+[node name="Spikes" parent="Ground/SpikeGroup2" instance=ExtResource("17_nngtn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.654335, 82.986496, -306.9998)
+
+[node name="Spikes2" parent="Ground/SpikeGroup2" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2.3836193, 0, 0, 0, 1, 0, 0, 0, 1.6625345, 75.103004, 82.986496, -297.93817)
+
+[node name="Spikes3" parent="Ground/SpikeGroup2" instance=ExtResource("17_nngtn")]
+transform = Transform3D(4.396538, 0, 0, 0, 1, 0, 0, 0, 1, 90.18052, 82.986496, -307.7064)
+
+[node name="Spikes4" parent="Ground/SpikeGroup2" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2.3836193, 0, 0, 0, 1.3939203, 0, 0, 0, 2.594102, 93.9108, 82.986496, -294.99548)
+
+[node name="Spikes5" parent="Ground/SpikeGroup2" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2.3836193, 0, 0, 0, 1.3939203, 0, 0, 0, 2.594102, 84.453316, 82.986496, -320.59384)
+
+[node name="Spikes6" parent="Ground/SpikeGroup2" instance=ExtResource("17_nngtn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 98.99462, 80.54086, -314.40347)
+
+[node name="Block11" type="Node3D" parent="Ground"]
+transform = Transform3D(-1.3987644e-06, 0, 32, 0, 85.212, 0, -32, 0, -1.3987644e-06, 10.529179, 37.997456, -449.19998)
+
+[node name="terrain_box" parent="Ground/Block11" instance=ExtResource("2_0f350")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block11"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block11/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block12" type="Node3D" parent="Ground"]
+transform = Transform3D(-6.139347e-07, 0, 13.1754265, 0, 85.21199, 0, -14.045189, 0, -5.759162e-07, 44.149727, 30.063206, -435.306)
+
+[node name="terrain_box" parent="Ground/Block12" instance=ExtResource("2_0f350")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block12"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block12/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block13" type="Node3D" parent="Ground"]
+transform = Transform3D(-6.139347e-07, 0, 13.1754265, 0, 85.21199, 0, -14.045189, 0, -5.759162e-07, 41.61164, 25.43523, -478.5077)
+
+[node name="terrain_box" parent="Ground/Block13" instance=ExtResource("2_0f350")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block13"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block13/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block14" type="Node3D" parent="Ground"]
+transform = Transform3D(-6.139347e-07, 0, 13.1754265, 0, 37.070633, 0, -14.045189, 0, -5.759162e-07, -22.19281, 106.46411, -413.64038)
+
+[node name="terrain_box" parent="Ground/Block14" instance=ExtResource("2_0f350")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block14"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block14/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block15" type="Node3D" parent="Ground"]
+transform = Transform3D(64, 0, 0, 0, 64, 0, 0, 0, 38.60491, -104.19937, 144.04973, -283.8575)
+
+[node name="terrain_box" parent="Ground/Block15" instance=ExtResource("2_0f350")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Ground/Block15"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/Block15/StaticBody3D"]
+shape = SubResource("BoxShape3D_8c0lf")
+
+[node name="Block16" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(33.37876, 0, 0, 0, 64, 0, 0, 0, 64, -171.8514, 169.3535, -444.36404)
+
+[node name="Booster2" parent="Ground" instance=ExtResource("16_2klc5")]
+transform = Transform3D(5.1884446, -0.71096873, 2.928237, -1.5720286, 4.335629, 3.8381047, -2.5707533, -4.086178, 3.5629177, -168.25633, 225.76602, -341.80133)
+
+[node name="Block17" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(33.37876, 0, 0, 0, 25.556416, 0, 0, 0, 44.3383, -171.8514, 297.52737, -461.8861)
+
+[node name="Booster3" parent="Ground" instance=ExtResource("16_2klc5")]
+transform = Transform3D(6.0000005, 0, 0, 0, 6.0000005, 0, 0, 0, 6, -172.09285, 228.78047, -518.0975)
+
+[node name="Block18" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(-33.37876, 0, -1.4148551e-06, 0, 25.556416, 0, 2.918064e-06, 0, -16.184055, -171.8514, 297.52737, -542.8995)
+
+[node name="Spikes" parent="Ground" instance=ExtResource("17_nngtn")]
+transform = Transform3D(6.0835247, 0, 0, 0, 1, 0, 0, 0, 3, -170.31418, 207.66707, -522.818)
+
+[node name="GPUParticles3D" parent="Ground/Spikes" index="1"]
+amount = 100
+
+[node name="Block19" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(-1.3987644e-06, 0, 16, 0, 16, 0, -32, 0, -6.993822e-07, -171.8514, 327.76114, -317.79303)
+
+[node name="Block20" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(-64, 0, -5.5950577e-06, 0, 32, 0, 5.5950577e-06, 0, -64, -171.8514, 447.26315, -251.54102)
+
+[node name="Block21" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(-6.993822e-07, 0, 16, 0, 16, 0, -16, 0, -6.993822e-07, -171.8514, 422.44928, -153.85571)
+
+[node name="Block22" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(-6.993822e-07, 0, 16, 0, 8, 0, -16, 0, -6.993822e-07, -154.90631, 367.2702, -259.92078)
+
+[node name="Block23" parent="Ground" instance=ExtResource("4_t205d")]
+transform = Transform3D(16, 0, 0, 0, 8, 0, 0, 0, 16, -184.26569, 382.3363, -268.06616)
+
+[node name="Spikes2" parent="Ground" instance=ExtResource("17_nngtn")]
+transform = Transform3D(6.0835247, 0, 0, 0, 2.7755055, 0, 0, 0, 3, -170.31418, 394.25204, -147.14713)
+
+[node name="GPUParticles3D" parent="Ground/Spikes2" index="1"]
+amount = 100
+
+[node name="Spikes3" parent="Ground" instance=ExtResource("17_nngtn")]
+transform = Transform3D(6.0835247, 0, 0, 0, 2.7755055, 0, 0, 0, 3, -170.31418, 375.52307, -169.9625)
+
+[node name="GPUParticles3D" parent="Ground/Spikes3" index="1"]
+amount = 100
+
+[node name="Node3D" type="Node3D" parent="Ground"]
+
+[node name="Booster4" parent="Ground/Node3D" instance=ExtResource("16_2klc5")]
+transform = Transform3D(6.0000005, 0, 0, 0, 6.0000005, 0, 0, 0, 6.0000005, -167.8076, 486.5708, -250.42746)
+
+[node name="Booster5" parent="Ground/Node3D" instance=ExtResource("16_2klc5")]
+transform = Transform3D(6.0000005, 0, 0, 0, 6.0000005, 0, 0, 0, 6.0000005, -189.45645, 534.9943, -250.42746)
+
+[node name="Spikes2" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 2, -199.14403, 535.3706, -248.18767)
+
+[node name="Spikes3" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 2, -181.5294, 535.3706, -248.18767)
+
+[node name="Booster6" parent="Ground/Node3D" instance=ExtResource("16_2klc5")]
+transform = Transform3D(6.0000005, 0, 0, 0, 6.0000005, 0, 0, 0, 6.0000005, -189.45645, 589.0374, -271.8543)
+
+[node name="Spikes4" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 3.558768, -189.94214, 581.73175, -275.61234)
+
+[node name="Spikes5" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(2, 0, 0, 0, 1, 0, 0, 0, 1.3749505, -189.94214, 596.3039, -261.6081)
+
+[node name="Booster7" parent="Ground/Node3D" instance=ExtResource("16_2klc5")]
+transform = Transform3D(-2.6226834e-07, 6.0000005, 0, -6.0000005, -2.6226834e-07, 0, 0, 0, 6.0000005, -155.29213, 642.8022, -271.8543)
+
+[node name="Spikes6" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-8.742278e-08, 0, 3.558768, 0, 1, 0, -2, 0, -1.555587e-07, -150.91014, 633.3046, -272.7713)
+
+[node name="Spikes7" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-8.742278e-08, 0, 3.558768, 0, 1, 0, -2, 0, -1.555587e-07, -150.91014, 652.43774, -272.7713)
+
+[node name="Spikes8" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-3.4789045e-07, 0, 3.5587685, 0, 1, 0, -7.9588056, 0, -1.5555871e-07, -104.29405, 616.6821, -272.7713)
+
+[node name="Spikes9" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-2.0687757e-07, 0, 3.5587685, 0, 1, 0, -4.732807, 0, -1.5555871e-07, -82.95948, 616.6821, -249.26006)
+
+[node name="Spikes10" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-2.5389508e-07, 0, 3.5587685, 0, 1, 0, -5.8084426, 0, -1.5555871e-07, -42.17182, 612.24677, -264.6094)
+
+[node name="Spikes11" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-2.4757423e-07, 0, 6.9187374, 0, 1, 0, -5.6638384, 0, -3.024276e-07, -8.57217, 612.24677, -256.0276)
+
+[node name="Spikes12" parent="Ground/Node3D" instance=ExtResource("17_nngtn")]
+transform = Transform3D(-2.0953125e-07, 0, 3.5587685, 0, 1, 0, -4.793516, 0, -1.5555871e-07, -59.418888, 613.02484, -264.04916)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fq0f7")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7313537, 0.6819984, 0, -0.6819984, 0.7313537, 0, 0, 0)
+
+[node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("position_follow_object")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1253889, 0)
+script = ExtResource("2_k5f4k")
+vertical_look_max_angle_deg = 15.0
+position_follow_object = NodePath("../Player")
+controller_horizontal_look_speed = 0.05
+controller_vertical_look_speed = 0.05
+
+[node name="Camera3D" type="Camera3D" parent="CameraController"]
+transform = Transform3D(1, 0, 0, 0, 0.99577296, 0.091849215, 0, -0.091849215, 0.99577296, 0, 1.4392631, 5.3696923)
+
+[node name="Treasures" type="Node3D" parent="."]
+
+[node name="Collectable_001" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.60347, 11.52145, -50.7581)
+
+[node name="Collectable_002" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.671793, 16.696716, -40.676105)
+
+[node name="GiveExtraJump" parent="Treasures" instance=ExtResource("6_c7le1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.736908, 24.985992, -121.8205)
+
+[node name="Collectable_003" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.301823, 57.13514, -214.68129)
+
+[node name="Collectable_004" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.69839, 82.6282, -253.98001)
+
+[node name="Collectable_005" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.69839, 73.86904, -432.37698)
+
+[node name="Collectable_006" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.153812, 83.079025, -457.60992)
+
+[node name="Collectable_007" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.153812, 99.61607, -457.60992)
+
+[node name="GiveExtraJump2" parent="Treasures" instance=ExtResource("6_c7le1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.566673, 129.1442, -434.59802)
+
+[node name="Collectable_008" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.277817, 125.10834, -456.6948)
+
+[node name="Collectable_009" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.1084175, 125.10834, -457.4388)
+
+[node name="Collectable_010" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.531921, 125.10834, -437.73523)
+
+[node name="Collectable_011" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.351974, 170.79097, -347.46448)
+
+[node name="Collectable_012" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.182575, 170.79097, -348.2085)
+
+[node name="Collectable_013" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.606079, 170.79097, -328.5049)
+
+[node name="Collectable_014" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 236.01715, -406.38147)
+
+[node name="Collectable_015" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 236.01715, -429.25687)
+
+[node name="Collectable_016" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 236.01715, -461.12015)
+
+[node name="Collectable_017" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 334.6957, -406.38147)
+
+[node name="Collectable_018" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 325.3457, -429.25687)
+
+[node name="Collectable_019" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 325.3457, -461.12015)
+
+[node name="GiveExtraJump3" parent="Treasures" instance=ExtResource("6_c7le1")]
+transform = Transform3D(-0.4901538, 0.4044615, -0.7721141, 0, 0.88582176, 0.4640257, 0.871636, 0.22744396, -0.4341889, -173.03949, 344.08514, -379.1442)
+
+[node name="Collectable_020" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -172.69647, 339.0116, -572.7362)
+
+[node name="Collectable_021" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(0.603183, -0.55051696, 0.5771494, 0, 0.7236049, 0.69021446, -0.79760283, -0.41632557, 0.4364662, -174.26103, 440.84857, -147.23088)
+
+[node name="Collectable_022" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(0.603183, -0.55051696, 0.5771494, 0, 0.7236049, 0.69021446, -0.79760283, -0.41632557, 0.4364662, -211.81717, 472.232, -182.0417)
+
+[node name="Collectable_023" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(0.99737585, -0.0011334161, 0.07238911, 0, 0.99987745, 0.015655354, -0.072397985, -0.015614271, 0.9972536, -190.05876, 588.068, -260.66034)
+
+[node name="RestoreJump" parent="Treasures" instance=ExtResource("5_nngtn")]
+transform = Transform3D(0.984521, 0.022564627, -0.1738082, 0, 0.9916778, 0.12874444, 0.17526682, -0.1267516, 0.9763276, -96.186966, 632.8887, -258.95383)
+
+[node name="RestoreJump2" parent="Treasures" instance=ExtResource("5_nngtn")]
+transform = Transform3D(0.984521, 0.022564627, -0.1738082, 0, 0.9916778, 0.12874444, 0.17526682, -0.1267516, 0.9763276, -56.826923, 632.8887, -241.30269)
+
+[node name="Collectable_024" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(0.99737585, -0.0011334161, 0.07238911, 0, 0.99987745, 0.015655354, -0.072397985, -0.015614271, 0.9972536, -10.904345, 624.87177, -259.07727)
+
+[node name="GiveExtraJump4" parent="Treasures" instance=ExtResource("6_c7le1")]
+transform = Transform3D(0.56863564, 0.41622058, -0.7095167, 0, 0.8625404, 0.5059882, 0.8225895, -0.28772292, 0.4904712, -239.74059, 468.08588, -207.49411)
+
+[node name="Collectable_025" parent="Treasures" instance=ExtResource("4_pa6b8")]
+transform = Transform3D(0.3690549, 0.50138056, -0.7825702, 0, 0.8420096, 0.53946257, 0.9294076, -0.19909129, 0.31074783, -46.577366, 211.85295, -292.6963)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+visible = false
+offset_left = 20.0
+offset_top = 10.0
+offset_right = 521.0
+offset_bottom = 102.0
+
+[node name="CollectablesContainer" type="HBoxContainer" parent="VBoxContainer" node_paths=PackedStringArray("max_label", "curr_label")]
+layout_mode = 2
+script = ExtResource("8_bvt00")
+max_label = NodePath("Max")
+curr_label = NodePath("Found")
+
+[node name="Label" type="Label" parent="VBoxContainer/CollectablesContainer"]
+layout_mode = 2
+text = "Collectables:"
+label_settings = ExtResource("8_754fn")
+
+[node name="Found" type="Label" parent="VBoxContainer/CollectablesContainer"]
+layout_mode = 2
+text = "0"
+label_settings = ExtResource("8_754fn")
+
+[node name="Separator" type="Label" parent="VBoxContainer/CollectablesContainer"]
+layout_mode = 2
+text = "/"
+label_settings = ExtResource("8_754fn")
+
+[node name="Max" type="Label" parent="VBoxContainer/CollectablesContainer"]
+layout_mode = 2
+text = "0"
+label_settings = ExtResource("8_754fn")
+
+[node name="JumpsContainer" type="HBoxContainer" parent="VBoxContainer" node_paths=PackedStringArray("indicators")]
+layout_mode = 2
+script = ExtResource("10_ha31o")
+indicators = [NodePath("JumpIndicator"), NodePath("JumpIndicator2"), NodePath("JumpIndicator3"), NodePath("JumpIndicator4")]
+
+[node name="Label" type="Label" parent="VBoxContainer/JumpsContainer"]
+layout_mode = 2
+text = "Air Jumps:"
+label_settings = SubResource("LabelSettings_00k4y")
+
+[node name="JumpIndicator" type="MarginContainer" parent="VBoxContainer/JumpsContainer" node_paths=PackedStringArray("indictor_image")]
+layout_mode = 2
+script = ExtResource("11_pa6b8")
+indictor_image = NodePath("filled")
+
+[node name="filled" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator"]
+layout_mode = 2
+texture = ExtResource("10_qxfql")
+
+[node name="base" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator"]
+layout_mode = 2
+texture = ExtResource("11_ha31o")
+
+[node name="JumpIndicator2" type="MarginContainer" parent="VBoxContainer/JumpsContainer" node_paths=PackedStringArray("indictor_image")]
+layout_mode = 2
+script = ExtResource("11_pa6b8")
+indictor_image = NodePath("filled")
+
+[node name="filled" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator2"]
+layout_mode = 2
+texture = ExtResource("10_qxfql")
+
+[node name="base" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator2"]
+layout_mode = 2
+texture = ExtResource("11_ha31o")
+
+[node name="JumpIndicator3" type="MarginContainer" parent="VBoxContainer/JumpsContainer" node_paths=PackedStringArray("indictor_image")]
+layout_mode = 2
+script = ExtResource("11_pa6b8")
+indictor_image = NodePath("filled")
+
+[node name="filled" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator3"]
+layout_mode = 2
+texture = ExtResource("10_qxfql")
+
+[node name="base" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator3"]
+layout_mode = 2
+texture = ExtResource("11_ha31o")
+
+[node name="JumpIndicator4" type="MarginContainer" parent="VBoxContainer/JumpsContainer" node_paths=PackedStringArray("indictor_image")]
+layout_mode = 2
+script = ExtResource("11_pa6b8")
+indictor_image = NodePath("filled")
+
+[node name="filled" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator4"]
+layout_mode = 2
+texture = ExtResource("10_qxfql")
+
+[node name="base" type="TextureRect" parent="VBoxContainer/JumpsContainer/JumpIndicator4"]
+layout_mode = 2
+texture = ExtResource("11_ha31o")
+
+[node name="Player" type="CharacterBody3D" parent="." node_paths=PackedStringArray("camera_root", "jump_sound", "death_sound", "extra_jump_sound", "dash_sound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1253889, 0)
+collision_mask = 14
+script = ExtResource("1_tumq0")
+speed = 10.0
+post_dash_speed = 15.0
+dash_speed = SubResource("Curve_tumq0")
+jump_velocity = 18.0
+camera_root = NodePath("../CameraController")
+yaw_turn_speed = 5.0
+shader_velocity_change = 10.0
+gravity_scale = 2.0
+wall_jump_collision_layers = 2
+wall_jump_velocity = 20.0
+wall_jump_input_scale = SubResource("Curve_bvt00")
+max_air_jumps = 0
+jump_sound = NodePath("JumpSound")
+death_sound = NodePath("DeathSound")
+extra_jump_sound = NodePath("ExtraJumpSound")
+dash_sound = NodePath("DashSound")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+visible = false
+shape = SubResource("BoxShape3D_tumq0")
+
+[node name="Decal" type="Decal" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50.5, 0)
+size = Vector3(1, 100, 1)
+texture_albedo = ExtResource("3_81xng")
+
+[node name="player_box" parent="Player" instance=ExtResource("4_wqkje")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="JumpSound" type="AudioStreamPlayer3D" parent="Player"]
+stream = SubResource("AudioStreamRandomizer_1cgv8")
+volume_db = -8.0
+bus = &"SFX"
+
+[node name="DeathSound" type="AudioStreamPlayer3D" parent="Player"]
+stream = SubResource("AudioStreamRandomizer_idpk0")
+bus = &"SFX"
+
+[node name="ExtraJumpSound" type="AudioStreamPlayer3D" parent="Player"]
+stream = ExtResource("24_hcs0j")
+bus = &"SFX"
+
+[node name="DashSound" type="AudioStreamPlayer3D" parent="Player"]
+stream = SubResource("AudioStreamRandomizer_bp4cd")
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_vofx3")
+autoplay = true
+bus = &"Music"
+playback_type = 1
+
+[node name="PauseMenu" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+text = "Pause Menu"
+label_settings = ExtResource("8_754fn")
+
+[node name="Control2" type="Control" parent="PauseMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+
+[node name="Help" type="Label" parent="PauseMenu/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Keyboard Controls:
+Move - WASD
+Move Camera - Mouse
+Jump - Space
+Dash - Shift"
+label_settings = SubResource("LabelSettings_vofx3")
+
+[node name="Control2" type="Control" parent="PauseMenu/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(40, 20)
+layout_mode = 2
+
+[node name="Help2" type="Label" parent="PauseMenu/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Controller:
+Move - Left Stick or Pad
+Move Camera - Right Stick
+Jump - A
+Dash - Right Trigger"
+label_settings = SubResource("LabelSettings_vofx3")
+
+[node name="Control4" type="Control" parent="PauseMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="QuitButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "Quit"
+
+[node name="Intro" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -176.0
+offset_top = -337.0
+offset_right = 870.0
+offset_bottom = 564.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+theme_override_styles/panel = SubResource("StyleBoxFlat_re0q2")
+script = ExtResource("19_24uko")
+
+[node name="MarginContainer" type="MarginContainer" parent="Intro"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Intro/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Intro/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Intro"
+label_settings = ExtResource("8_754fn")
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Intro/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "The goal is to collect all the McGuffins scattered around the map."
+label_settings = ExtResource("19_pnhnk")
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Intro/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "McGuffin:
+Collect all of
+these to win"
+label_settings = ExtResource("19_pnhnk")
+horizontal_alignment = 2
+
+[node name="Control" type="Control" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("20_24uko")
+
+[node name="Control2" type="Control" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(40, 20)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Extra Jump:
+Will give you an
+additional jump
+while in the air."
+label_settings = ExtResource("19_pnhnk")
+horizontal_alignment = 2
+
+[node name="Control3" type="Control" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="TextureRect2" type="TextureRect" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("21_gf56v")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Intro/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Jump Recharge:
+Will refresh one
+of your air jumps."
+label_settings = ExtResource("19_pnhnk")
+horizontal_alignment = 2
+
+[node name="Control" type="Control" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("22_pnhnk")
+
+[node name="Control2" type="Control" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(40, 20)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "You can wall jump by moving towards a wall
+and pressing jump."
+label_settings = ExtResource("19_pnhnk")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Intro/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Help" type="Label" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Keyboard Controls:
+Move - WASD
+Move Camera - Mouse
+Jump - Space
+Dash - Shift"
+label_settings = SubResource("LabelSettings_vofx3")
+
+[node name="Control2" type="Control" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(40, 20)
+layout_mode = 2
+
+[node name="Help2" type="Label" parent="Intro/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Controller:
+Move - Left Stick or Pad
+Move Camera - Right Stick
+Jump - A
+Dash - Right Trigger"
+label_settings = SubResource("LabelSettings_vofx3")
+
+[node name="Control" type="Control" parent="Intro/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="Intro/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Press Jump to start."
+label_settings = SubResource("LabelSettings_re0q2")
+horizontal_alignment = 1
+
+[node name="Congrats" type="PanelContainer" parent="." node_paths=PackedStringArray("death_count", "time_played", "player")]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("35_re0q2")
+death_count = NodePath("MarginContainer/VBoxContainer/Deaths")
+time_played = NodePath("MarginContainer/VBoxContainer/Time")
+player = NodePath("../Player")
+
+[node name="MarginContainer" type="MarginContainer" parent="Congrats"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Congrats/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Congrats/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Congratulations, you've collected
+all the McGuffins and possibly
+saved the world."
+label_settings = ExtResource("8_754fn")
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="Congrats/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Deaths" type="Label" parent="Congrats/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Deaths: 0"
+label_settings = ExtResource("8_754fn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Time" type="Label" parent="Congrats/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Time: 00:00.0000"
+label_settings = ExtResource("8_754fn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control2" type="Control" parent="Congrats/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Congrats/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Press Escape or Start to quit."
+label_settings = ExtResource("8_754fn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="PauseMenu/VBoxContainer/QuitButton" to="." method="_on_quit_pressed"]
+
+[editable path="Ground/Spikes"]
+[editable path="Ground/Spikes2"]
+[editable path="Ground/Spikes3"]

@@ -1,0 +1,56 @@
+[gd_scene load_steps=7 format=3 uid="uid://bhsg7qowb6gyu"]
+
+[ext_resource type="Script" uid="uid://dofkbaf6gqc07" path="res://Scripts/player_controller.gd" id="1_tumq0"]
+[ext_resource type="Script" uid="uid://bqb7aml633brf" path="res://Scenes/camera_controller.gd" id="2_k5f4k"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_51e2h"]
+size = Vector3(50, 1, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tumq0"]
+albedo_color = Color(0.11858138, 0.11858138, 0.11858138, 1)
+
+[sub_resource type="Curve" id="Curve_tumq0"]
+_limits = [0.0, 40.0, 0.0, 1.0]
+_data = [Vector2(0, 40), 0.0, 0.0, 0, 0, Vector2(0.5012468, 40), 0.0, 0.0, 0, 0, Vector2(0.9962593, 0.35168839), -231.85036, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tumq0"]
+
+[node name="Level" type="Node3D"]
+
+[node name="PrototypeGround" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PrototypeGround"]
+visible = false
+shape = SubResource("BoxShape3D_51e2h")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="PrototypeGround"]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_tumq0")
+
+[node name="PrototypePlayer" type="CharacterBody3D" parent="." node_paths=PackedStringArray("cameraRoot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1253889, 0)
+script = ExtResource("1_tumq0")
+speed = 20.0
+dash_speed = SubResource("Curve_tumq0")
+jump_velocity = 18.0
+cameraRoot = NodePath("../CameraController")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PrototypePlayer"]
+shape = SubResource("BoxShape3D_tumq0")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="PrototypePlayer"]
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="PrototypePlayer/CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5908313, -0.5859617)
+radius = 0.2
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7313537, 0.6819984, 0, -0.6819984, 0.7313537, 0, 0, 0)
+
+[node name="CameraController" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1253889, 0)
+script = ExtResource("2_k5f4k")
+
+[node name="Camera3D" type="Camera3D" parent="CameraController"]
+transform = Transform3D(1, 0, 0, 0, 0.99577296, 0.091849215, 0, -0.091849215, 0.99577296, 0, 1.4392631, 3.595387)
